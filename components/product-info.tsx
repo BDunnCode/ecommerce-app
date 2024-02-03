@@ -16,8 +16,9 @@ interface Props {
 
 export function ProductInfo({ product }: Props) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
-  const { addItem, cartDetails } = useShoppingCart()
-  const isInCart = cartDetails?
+  const { addItem, incrementItem, cartDetails } = useShoppingCart()
+  const { toast } = useToast()
+  const isInCart = !!cartDetails?.[product._id]
 
   function addToCart() {
     const item = {
@@ -26,7 +27,19 @@ export function ProductInfo({ product }: Props) {
         size: selectedSize,
       },
     }
-    addItem(item)
+    isInCart ? incrementItem(item._id) : addItem(item)
+    toast({
+      title: `${item.name} (${getSizeName(selectedSize)})`,
+      description: "Product added to cart",
+      action: (
+        <Link href="/cart">
+          <Button variant="link" className="gap-x-2 whitespace-nowrap">
+            <span>Open Cart</span>
+            <ArrowRight className="h-5 w-5" />
+          </Button>
+        </Link>
+      ),
+    })
   }
 
   return (
