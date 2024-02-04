@@ -37,10 +37,12 @@ export function ProductGallery({ product }: Props) {
                   )}`}
                 />
               </span>
-              {/* <span
+              {index === selectedImage && (
+                <span
                   className="pointer-events-none absolute inset-0 rounded-md ring-4 ring-indigo-500 ring-offset-2"
                   aria-hidden="true"
-                /> */}
+                />
+              )}
             </div>
           ))}
         </ul>
@@ -50,11 +52,15 @@ export function ProductGallery({ product }: Props) {
       <div className="aspect-h-1 aspect-w-1 w-full">
         <Image
           priority
-          src={"src"}
-          alt={`alt`}
-          width={0}
-          height={0}
+          src={urlForImage(product.images[selectedImage]).url()}
+          alt={`Main ${product.name} image`}
+          width={600}
+          height={750}
           className="h-full w-full border-2 border-gray-200 object-cover object-center shadow-sm dark:border-gray-800 sm:rounded-lg"
+          placeholder="blur"
+          blurDataURL={`data:image/svg+xml;base64, ${toBase64(
+            shimmer(200, 200)
+          )}`}
         />
       </div>
     </div>

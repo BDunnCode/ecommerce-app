@@ -54,7 +54,7 @@ export default async function Page({ searchParams }: Props) {
           {siteConfig.name}
         </h1>
         <p className="mx-auto mt-4 max-w-3xl text-base">
-          {siteConfig.description}
+          {siteConfig.description} 
         </p>
       </div>
       <div>
