@@ -11,13 +11,22 @@ import { shimmer, toBase64 } from "@/lib/image"
 import { getSizeName } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import { CartItemsEmpty } from "@/components/cart-items-empty"
 
 export function CartItems() {
-  const { cartDetails } = useShoppingCart()
+  const { cartDetails, removeItem, setItemQuantity } = useShoppingCart()
   const cartItems = Object.entries(cartDetails!).map(([_, product]) => product)
-  function removeCartItem() {}
+  const { toast } = useToast()
+
+  function removeCartItem(product: Product) {
+    removeItem(product._id)
+    toast({
+      title: `${product.name} removed`,
+      description: "Product removed from cart",
+      variant: "destructive",
+    })
+  }
 
   if (cartItems.length === 0) return <CartItemsEmpty />
   return (
@@ -75,12 +84,19 @@ export function CartItems() {
                   name={`quantity-${productIdx}`}
                   type="number"
                   className="w-16"
+                  min={1}
+                  max={10}
+                  value={product.quantity}
+                  onChange={(event) =>
+                    setItemQuantity(product._id, Number(event.target.value))
+                  }
                 />
                 <div className="absolute right-0 top-0">
                   <Button
                     variant="ghost"
                     type="button"
                     className="-mr-2 inline-flex p-2"
+                    onClick={() => removeCartItem(product)}
                   >
                     <span className="sr-only">Remove</span>
                     <X className="h-5 w-5" aria-hidden="true" />
