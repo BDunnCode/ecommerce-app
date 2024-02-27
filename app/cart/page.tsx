@@ -16,7 +16,6 @@ export default function Page() {
             </h2>
             <CartItems />
           </section>
-          {/* Cart Summary */}
           <CartSummary />
         </form>
       </main>
