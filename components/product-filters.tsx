@@ -84,6 +84,7 @@ export function ProductFilters() {
                       )}
                       onClick={(event) => {
                         const params = new URLSearchParams(searchParams)
+                        console.log(params)
                         const checked =
                           event.currentTarget.dataset.state === "checked"
                         checked

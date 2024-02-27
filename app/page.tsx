@@ -3,7 +3,6 @@ import { groq } from "next-sanity"
 
 import { SanityProduct } from "@/config/inventory"
 import { siteConfig } from "@/config/site"
-import { seedSanityData } from "@/lib/seed"
 import { cn } from "@/lib/utils"
 import { ProductFilters } from "@/components/product-filters"
 import { ProductGrid } from "@/components/product-grid"
@@ -22,19 +21,19 @@ interface Props {
 
 export default async function Page({ searchParams }: Props) {
   const { date = "desc", price, color, category, size, search } = searchParams
-  const priceOrder = price ? `order(price ${price})` : ""
-  const dateOrder = date ? `order(_createdAt ${date})` : ""
+  const priceOrder = price ? `| order(price ${price})` : ""
+  const dateOrder = date ? `| order(_createdAt ${date})` : ""
   const order = `${priceOrder}${dateOrder}`
 
   const productFilter = `_type == "product"`
   const colorFilter = color ? `&& "${color}" in colors` : ""
   const categoryFilter = category ? `&& "${category}" in categories` : ""
   const sizeFilter = size ? `&& "${size}" in sizes` : ""
-  const searchFilter = search ? `&& "${size}" in sizes` : ""
+  const searchFilter = search ? `&& name match "${search}"` : ""
   const filter = `*[${productFilter}${colorFilter}${categoryFilter}${sizeFilter}${searchFilter}]`
 
   const products = await client.fetch<SanityProduct[]>(
-    groq`*[_type == "product"] | ${order}  {
+    groq`${filter} ${order}  {
       _id, 
       _createdAt,
       name,
@@ -54,7 +53,7 @@ export default async function Page({ searchParams }: Props) {
           {siteConfig.name}
         </h1>
         <p className="mx-auto mt-4 max-w-3xl text-base">
-          {siteConfig.description} 
+          {siteConfig.description}
         </p>
       </div>
       <div>
@@ -63,7 +62,6 @@ export default async function Page({ searchParams }: Props) {
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               {products.length} result{products.length === 1 ? "" : "s"}
             </h1>
-            {/* Product Sort */}
             <ProductSort />
           </div>
 
@@ -80,10 +78,8 @@ export default async function Page({ searchParams }: Props) {
               )}
             >
               <div className="hidden lg:block">
-                {/* Product filters */}
                 <ProductFilters />
               </div>
-              {/* Product grid */}
               <ProductGrid products={products} />
             </div>
           </section>
